@@ -44,7 +44,7 @@ const TCGDEX="https://api.tcgdex.net/v2/en";
 const TRACK_KEY="pokediction-tracked-market-v1";
 let tracked=[];try{tracked=JSON.parse(localStorage.getItem(TRACK_KEY))||[]}catch{tracked=[]}
 if(!Array.isArray(tracked))tracked=[];
-tracked=tracked.filter(t=>t&&typeof t.id==="string"&&typeof t.source==="string"&&typeof t.variant==="string"&&Number.isFinite(Number(t.price))&&Number(t.price)>=0).map(t=>({...t,snapshots:Array.isArray(t.snapshots)?t.snapshots.filter(s=>s&&typeof s.at==="string"&&Number.isFinite(Number(s.price))&&Number(s.price)>=0).slice(-30):[]}));
+tracked=tracked.filter(t=>t&&typeof t.id==="string"&&typeof t.source==="string"&&typeof t.variant==="string"&&Number.isFinite(Number(t.price))&&Number(t.price)>0).map(t=>({...t,snapshots:Array.isArray(t.snapshots)?t.snapshots.filter(s=>s&&typeof s.at==="string"&&Number.isFinite(Number(s.price))&&Number(s.price)>0).slice(-30):[]}));
 function saveTracked(){localStorage.setItem(TRACK_KEY,JSON.stringify(tracked));renderTracked()}
 function dollars(n){return Number.isFinite(Number(n))?"$"+Number(n).toFixed(2):"No quote"}
 function priceOptions(card){
@@ -52,7 +52,7 @@ function priceOptions(card){
  Object.entries(p).forEach(([variant,v])=>{if(v&&typeof v==="object"&&(v.marketPrice!=null||v.midPrice!=null||v.lowPrice!=null)){out.push({source:"TCGplayer",variant,label:variant.replace(/-/g," "),price:Number(v.marketPrice??v.midPrice??v.lowPrice),low:v.lowPrice,mid:v.midPrice,high:v.highPrice,updated:p.updated||null,currency:"USD"})}});
  const cm=card?.pricing?.cardmarket;
  if(cm){if(cm.trend!=null||cm.avg!=null)out.push({source:"Cardmarket",variant:"normal",label:"Cardmarket trend",price:Number(cm.trend??cm.avg),low:cm.low,mid:cm.avg,updated:cm.updated||null,currency:"EUR"});if(cm["trend-holo"]!=null||cm["avg-holo"]!=null)out.push({source:"Cardmarket",variant:"holo",label:"Cardmarket holo trend",price:Number(cm["trend-holo"]??cm["avg-holo"]),low:cm["low-holo"],mid:cm["avg-holo"],updated:cm.updated||null,currency:"EUR"})}
- return out.filter(x=>Number.isFinite(x.price));
+ return out.filter(x=>Number.isFinite(x.price)&&x.price>0);
 }
 function cardImage(card){return card.image?card.image+"/low.png":""}
 function bestPrice(card){return priceOptions(card).find(x=>x.source==="TCGplayer")||priceOptions(card)[0]||null}

@@ -61,6 +61,10 @@ class StaticSafetyTests(unittest.TestCase):
         self.assertIn("Intentionally no client policies", SCHEMA)
         self.assertIn("trusted server/Edge Function", SCHEMA)
 
+    def test_zero_or_negative_prices_are_not_trackable(self):
+        self.assertIn("Number(t.price)>0", HTML)
+        self.assertIn("x.price>0", HTML)
+
     def test_no_old_random_outcome_logic(self):
         self.assertNotRegex(HTML, r"Math\.random\(\)\s*<\s*\.5")
 

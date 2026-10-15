@@ -65,6 +65,14 @@ class StaticSafetyTests(unittest.TestCase):
         self.assertIn("Number(t.price)>0", HTML)
         self.assertIn("x.price>0", HTML)
 
+    def test_hardening_migration_limits_client_grants(self):
+        migration = (ROOT / "supabase" / "migrations" / "20261015_harden_round_data.sql").read_text(encoding="utf-8")
+        self.assertIn("revoke all on table public.rounds from anon, authenticated", migration)
+        self.assertIn("grant select on table public.rounds to anon, authenticated", migration)
+        self.assertIn("grant select, insert on table public.predictions to authenticated", migration)
+        self.assertIn("round_opening_value_positive", migration)
+        self.assertIn("settled_round_has_values", migration)
+
     def test_no_old_random_outcome_logic(self):
         self.assertNotRegex(HTML, r"Math\.random\(\)\s*<\s*\.5")
 

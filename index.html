@@ -64,7 +64,7 @@ document.getElementById("marketSearchForm").addEventListener("submit",async e=>{
   results.innerHTML=details.map(card=>{
    const opts=priceOptions(card);const main=bestPrice(card);const img=cardImage(card);
    const prices=opts.length?opts.map(p=>'<span class="market-badge">'+escapeHtml(p.source+' '+p.label)+': '+dollars(p.price)+'</span>').join(""):'<span class="market-badge">No market quote available</span>';
-   const safe=JSON.stringify(card.id);
+   const safe="'"+String(card.id).replace(/\\/g,"\\\\").replace(/'/g,"\\'")+"'";
    const optsHtml=opts.map((p,i)=>'<option value="'+i+'">'+escapeHtml(p.source+" · "+p.label+" · "+dollars(p.price))+'</option>').join("");
    return '<article class="card-result clear-float">'+(img?'<img loading="lazy" src="'+escapeHtml(img)+'" alt="'+escapeHtml(card.name)+' card">':'')+'<h3>'+escapeHtml(card.name)+'</h3><p>'+escapeHtml(setName(card))+' · #'+escapeHtml(card.localId||"?")+'</p><p>'+escapeHtml(card.rarity||"Rarity unknown")+'</p><div class="market-price">'+(main?dollars(main.price):"No quote")+'</div><div>'+prices+'</div>'+(opts.length?'<label class="market-meta" for="variant-'+escapeHtml(card.id)+'">Track price variant</label><select id="variant-'+escapeHtml(card.id)+'" style="width:100%;margin-top:5px;background:#080f20;color:#f3f6ff;border:1px solid #354667;border-radius:8px;padding:8px">'+optsHtml+'</select>':'')+'<button class="track-btn" '+(opts.length?'onclick="trackCard('+safe+', document.getElementById(\'variant-'+escapeHtml(card.id)+'\').value)"':'disabled')+'>'+(opts.length?'Track this card':'No price data to track')+'</button><div class="market-meta">Price source update: '+escapeHtml(formatProviderDate(main?.updated))+'</div></article>'
   }).join("");

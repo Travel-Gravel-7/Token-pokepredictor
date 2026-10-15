@@ -26,8 +26,13 @@
 <footer>POKEDICTION · Market-data arcade prototype · Virtual coins only · Not financial advice.</footer></main>
 <script>
 const initial={coins:1000,streak:0,score:0,feed:["System online. Search and track a card to make your first market-based prediction."],pending:[]};
-let state;try{state=JSON.parse(localStorage.getItem("pokediction-demo-state"))||initial}catch{state={...initial}}
+let state;try{state=JSON.parse(localStorage.getItem("pokediction-demo-state"))||{}}catch{state={}}
+state={...initial,...(state&&typeof state==="object"?state:{})};
 if(!Array.isArray(state.pending))state.pending=[];
+if(!Array.isArray(state.feed))state.feed=[...initial.feed];
+if(!Number.isFinite(Number(state.coins)))state.coins=initial.coins;
+if(!Number.isFinite(Number(state.streak)))state.streak=initial.streak;
+if(!Number.isFinite(Number(state.score)))state.score=initial.score;
 function save(){localStorage.setItem("pokediction-demo-state",JSON.stringify(state));renderStats()}
 function renderStats(){document.getElementById("coins").textContent=state.coins.toLocaleString();document.getElementById("streak").textContent=state.streak+" 🔥";document.getElementById("score").textContent=state.score.toLocaleString();document.getElementById("feed").innerHTML=state.feed.slice(0,7).map(x=>"<li>"+escapeHtml(x)+"</li>").join("")}
 function renderMarkets(){const root=document.getElementById("markets");if(!tracked.length){root.innerHTML='<div class="market-status">Search and track a card above to make a market-based prediction.</div>';return}root.innerHTML=tracked.slice(0,12).map((t,i)=>{const s=t.snapshots||[];const last=s.length?s[s.length-1].price:t.price;const prev=s.length>1?s[s.length-2].price:null;const pct=prev&&prev>0?(last-prev)/prev*100:null;const pending=state.pending.some(p=>p.id===t.id&&p.source===t.source&&p.variant===t.variant);const label=pct===null?"Need another snapshot":(pct>0.05?"▲ +":pct<-.05?"▼ ":"→ ")+pct.toFixed(2)+"% since last snapshot";return '<div class="market"><div class="coin">'+(t.image?'<img src="'+escapeHtml(t.image)+'" alt="" style="width:44px;max-height:64px;object-fit:contain">':'<div class="orb">🃏</div>')+'<div><div class="name">'+escapeHtml(t.name)+'</div><div class="ticker">'+escapeHtml(t.set)+' · #'+escapeHtml(t.localId||"?")+' · '+escapeHtml(t.variant.replace(/-/g," "))+'</div></div></div><div><div class="price">'+escapeHtml(t.currency||"USD")+" "+Number(last).toFixed(2)+'</div><div class="change">'+escapeHtml(label)+'</div></div></div><div class="actions"><button class="btn" '+(pending||!s.length||state.coins<50?'disabled':'')+' onclick="pick('+i+',\'UP\')">▲ Predict UP</button><button class="btn alt" '+(pending||!s.length||state.coins<50?'disabled':'')+' onclick="pick('+i+',\'DOWN\')">▼ Predict DOWN</button></div>'+(pending?'<div class="market-status">Prediction pending: refresh the market quote to settle.</div>':'')}).join("")}
@@ -38,6 +43,8 @@ function escapeHtml(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":
 const TCGDEX="https://api.tcgdex.net/v2/en";
 const TRACK_KEY="pokediction-tracked-market-v1";
 let tracked=[];try{tracked=JSON.parse(localStorage.getItem(TRACK_KEY))||[]}catch{tracked=[]}
+if(!Array.isArray(tracked))tracked=[];
+tracked=tracked.filter(t=>t&&typeof t.id==="string"&&typeof t.source==="string"&&typeof t.variant==="string"&&Number.isFinite(Number(t.price))&&Number(t.price)>=0).map(t=>({...t,snapshots:Array.isArray(t.snapshots)?t.snapshots.filter(s=>s&&typeof s.at==="string"&&Number.isFinite(Number(s.price))&&Number(s.price)>=0).slice(-30):[]}));
 function saveTracked(){localStorage.setItem(TRACK_KEY,JSON.stringify(tracked));renderTracked()}
 function dollars(n){return Number.isFinite(Number(n))?"$"+Number(n).toFixed(2):"No quote"}
 function priceOptions(card){

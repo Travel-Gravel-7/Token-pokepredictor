@@ -28,3 +28,18 @@ The live GitHub Pages site is still the static demo. This repository now include
 5. Only then evaluate monetization and any real-money features separately.
 
 The current public demo remains available at https://travel-gravel-7.github.io/Token-pokepredictor/.
+
+
+## Additional hardening migration (staging first)
+
+A follow-up migration is available at `supabase/migrations/20261015_harden_round_data.sql`. It explicitly narrows client table grants and adds checks for non-empty asset tickers, positive market values, and required values on settled rounds.
+
+1. Do **not** run this directly against production without a backup.
+2. Create a Supabase staging project and enable MFA on the owner account.
+3. Run `supabase/schema.sql` first, then the hardening migration in the SQL Editor.
+4. Inspect existing `rounds` rows for violations before validating the new constraints.
+5. Test with separate anonymous, User A, and User B sessions. Confirm a user cannot read another user's predictions or update/delete submitted predictions.
+6. Confirm anonymous/authenticated clients cannot insert/update/delete rounds, and that the public client cannot change settlement outcomes.
+7. Record a backup and test restoring it before moving any real user data.
+
+The repository's automated checks inspect the migration text and intended grants; they do **not** execute PostgreSQL or prove that deployed Supabase policies behave correctly. No Supabase project was accessed or changed by this commit.

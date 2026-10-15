@@ -2,17 +2,99 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080b18"><title>Pokediction Arcade</title>
 <style>
 :root{color-scheme:dark;--bg:#080b18;--panel:#11182b;--line:#283654;--cyan:#55f4ff;--pink:#ff4ac6;--gold:#ffd166;--muted:#9ba9c7}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#253c70 0,transparent 55%),var(--bg);color:#f3f6ff;font:16px system-ui,sans-serif;min-height:100vh}header{padding:22px max(18px,calc((100% - 1050px)/2));border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.logo{font-weight:900;letter-spacing:.12em;color:var(--cyan);text-shadow:0 0 20px #55f4ff55}.pill{border:1px solid #4a5472;border-radius:99px;padding:7px 12px;color:var(--gold);font-size:12px;letter-spacing:.08em}main{max-width:1050px;margin:auto;padding:32px 18px 60px}.hero{text-align:center;padding:30px 0 34px}.eyebrow{color:var(--pink);letter-spacing:.2em;font-size:12px;font-weight:800}.hero h1{font-size:clamp(36px,7vw,66px);line-height:1.02;margin:12px 0;background:linear-gradient(90deg,var(--cyan),#fff,var(--pink));background-clip:text;color:transparent}.hero p{color:var(--muted);max-width:650px;margin:0 auto;line-height:1.6}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0}.stat,.panel{background:linear-gradient(145deg,#151e34,#0e1425);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 10px 40px #0003}.stat small{color:var(--muted);display:block}.stat strong{font-size:26px;color:var(--cyan)}.layout{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}.panel h2{margin:0 0 8px;font-size:20px}.sub{color:var(--muted);font-size:13px;line-height:1.5}.market{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 0;border-bottom:1px solid var(--line)}.market:last-child{border-bottom:0}.coin{display:flex;align-items:center;gap:12px}.orb{width:42px;height:42px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,#273b62,#101728);border:1px solid #4c6c9b;font-size:21px}.name{font-weight:750}.ticker{font-size:12px;color:var(--muted)}.price{text-align:right;font-weight:750}.change{font-size:12px;color:#74f5b4}.actions{display:flex;gap:8px;margin-top:12px}.btn{border:0;border-radius:10px;padding:11px 13px;font-weight:800;cursor:pointer;color:#07101c;background:var(--cyan);flex:1}.btn.alt{background:var(--pink)}.btn:active{transform:scale(.98)}.notice{margin-top:16px;border:1px solid #6c5a2d;background:#2a2417;color:#ffe6a1;border-radius:12px;padding:12px;font-size:12px;line-height:1.5}.feed{color:var(--muted);font-size:13px;line-height:1.8;padding-left:18px}.feed b{color:#f3f6ff}.reset{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:8px 10px;cursor:pointer}footer{text-align:center;color:#7785a5;font-size:12px;margin-top:28px}@media(max-width:720px){.layout{grid-template-columns:1fr}.stats{gap:8px}.stat{padding:12px}.stat strong{font-size:20px}}
+
+.market-lab{margin:0 0 16px;background:linear-gradient(145deg,#151e34,#0e1425);border:1px solid #2e536d;border-radius:16px;padding:18px;box-shadow:0 10px 40px #0003}.market-lab h2{margin:0 0 8px}.market-tools{display:flex;gap:8px;margin:14px 0}.market-tools input{min-width:0;flex:1;background:#080f20;color:#f3f6ff;border:1px solid #354667;border-radius:10px;padding:12px;font:inherit}.market-tools button,.track-btn,.refresh-btn{border:0;border-radius:10px;padding:11px 13px;font-weight:800;cursor:pointer;background:var(--cyan);color:#07101c}.refresh-btn{background:#ffd166}.market-results{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:12px}.card-result,.tracked-card{border:1px solid var(--line);background:#0a1121;border-radius:12px;padding:12px;min-width:0}.card-result img{width:86px;height:auto;max-height:122px;object-fit:contain;float:left;margin:0 12px 8px 0;border-radius:6px}.card-result h3,.tracked-card h3{font-size:15px;margin:2px 0 5px}.card-result p,.tracked-card p{font-size:12px;color:var(--muted);margin:4px 0;line-height:1.45}.market-price{font-size:19px;font-weight:850;color:var(--cyan);margin:8px 0}.market-meta{font-size:11px;color:var(--muted);line-height:1.5}.track-btn{width:100%;margin-top:9px}.market-status{font-size:12px;color:var(--muted);margin:8px 0;line-height:1.5}.tracked-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:12px}.tracked-card img{width:64px;max-height:92px;object-fit:contain;float:left;margin-right:10px}.market-badge{display:inline-block;border:1px solid #36566a;border-radius:99px;padding:3px 7px;font-size:10px;color:#a6f7ff;margin:2px 3px 2px 0}.market-warning{margin-top:12px;border:1px solid #6c5a2d;background:#2a2417;color:#ffe6a1;border-radius:12px;padding:10px;font-size:11px;line-height:1.5}.clear-float:after{content:"";display:block;clear:both}@media(max-width:480px){.market-tools{flex-wrap:wrap}.market-tools input{flex-basis:100%}.market-tools button{flex:1}}
 </style></head><body>
 <header><div class="logo">POKEDICTION <span style="color:#fff">/ ARCADE</span></div><span class="pill">DEMO MODE · VIRTUAL COINS ONLY</span></header>
 <main><section class="hero"><div class="eyebrow">THE FUTURE IS A GAME</div><h1>Predict the next move.</h1><p>A neon playground for Pokémon-inspired market predictions. Test your instincts, build a streak, and climb the leaderboard. This build uses simulated data and play coins only.</p></section>
 <section class="stats"><div class="stat"><small>YOUR PLAY COINS</small><strong id="coins">1,000</strong></div><div class="stat"><small>ACTIVE STREAK</small><strong id="streak">0 🔥</strong></div><div class="stat"><small>DEMO SCORE</small><strong id="score">0</strong></div></section>
+
+<section class="market-lab">
+  <h2>Live Card Market Intel</h2>
+  <div class="sub">Search real Pokémon cards and pull TCGplayer market prices through TCGdex. Track selected variants and build your own price history as snapshots are refreshed.</div>
+  <form class="market-tools" id="marketSearchForm"><input id="marketSearchInput" type="search" placeholder="Search a card, e.g. Charizard, Pikachu..." autocomplete="off" required><button type="submit">Search cards</button><button class="refresh-btn" type="button" id="refreshTracked">Refresh tracked</button></form>
+  <div id="marketStatus" class="market-status" role="status">Ready. Search for a Pokémon card to load its catalog entry and market data.</div>
+  <div id="marketResults" class="market-results"></div>
+  <h3 style="margin:22px 0 4px">Your tracked cards</h3>
+  <div class="sub">Saved in this browser for now. Use Refresh tracked to record another price snapshot.</div>
+  <div id="trackedCards" class="tracked-list"></div>
+  <div class="market-warning">Pricing data is supplied by a third-party catalog and can be missing, stale, or matched to the wrong printing/finish. Confirm set, collector number, language, and holo variant before relying on a value. This first version stores tracking history in this browser only; it is not yet shared across devices or users.</div>
+</section>
+
 <div class="layout"><section class="panel"><h2>Prediction Arena</h2><div class="sub">Choose whether the simulated signal moves up or down. Correct picks earn virtual coins.</div><div id="markets"></div><div class="notice">Simulation only. Prices and outcomes are generated locally and are not live market data. No real money, tokens, or prizes are involved.</div></section>
 <aside class="panel"><h2>Arcade Feed</h2><div class="sub">Your recent demo activity</div><ul id="feed" class="feed"><li>System online. Welcome to the arena.</li></ul><div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px"><span class="sub">Local demo progress</span><button class="reset" id="reset">Reset</button></div></aside></div>
 <footer>POKEDICTION · Early playable demo · Not financial advice, not a live exchange.</footer></main>
 <script>
 const assets=[{name:"Pikachu Pulse",ticker:"PIKA",emoji:"⚡",price:24.8},{name:"Charizard Flame",ticker:"CHAR",emoji:"🔥",price:81.4},{name:"Mewtwo Signal",ticker:"MEWT",emoji:"🔮",price:63.2}];
-const initial={coins:1000,streak:0,score:0,feed:["System online. Welcome to the arena."]};let state;try{state=JSON.parse(localStorage.getItem("pokediction-demo-state"))||initial}catch{state={...initial}}function save(){localStorage.setItem("pokediction-demo-state",JSON.stringify(state));renderStats()}function renderStats(){document.getElementById("coins").textContent=state.coins.toLocaleString();document.getElementById("streak").textContent=state.streak+" 🔥";document.getElementById("score").textContent=state.score.toLocaleString();document.getElementById("feed").innerHTML=state.feed.slice(0,7).map(x=>"<li>"+x+"</li>").join("")}
-function renderMarkets(){document.getElementById("markets").innerHTML=assets.map((a,i)=>{let p=a.price*(.94+Math.random()*.12);return '<div class="market"><div class="coin"><div class="orb">'+a.emoji+'</div><div><div class="name">'+a.name+'</div><div class="ticker">'+a.ticker+' · SIMULATED</div></div></div><div><div class="price">$'+p.toFixed(2)+'</div><div class="change">● Signal active</div></div></div><div class="actions"><button class="btn" onclick="pick('+i+',\'UP\')">▲ Predict UP</button><button class="btn alt" onclick="pick('+i+',\'DOWN\')">▼ Predict DOWN</button></div>'}).join("")}
+const initial={coins:1000,streak:0,score:0,feed:["System online. Welcome to the arena."]};
+let state;try{state=JSON.parse(localStorage.getItem("pokediction-demo-state"))||initial}catch{state={...initial}}
+function save(){localStorage.setItem("pokediction-demo-state",JSON.stringify(state));renderStats()}
+function renderStats(){document.getElementById("coins").textContent=state.coins.toLocaleString();document.getElementById("streak").textContent=state.streak+" 🔥";document.getElementById("score").textContent=state.score.toLocaleString();document.getElementById("feed").innerHTML=state.feed.slice(0,7).map(x=>"<li>"+escapeHtml(x)+"</li>").join("")}
+function renderMarkets(){document.getElementById("markets").innerHTML=assets.map((a,i)=>{let p=a.price*(.94+Math.random()*.12);return '<div class="market"><div class="coin"><div class="orb">'+a.emoji+'</div><div><div class="name">'+a.name+'</div><div class="ticker">'+a.ticker+' · SIMULATED</div></div></div><div><div class="price">$'+p.toFixed(2)+'</div><div class="change">● Demo signal</div></div></div><div class="actions"><button class="btn" onclick="pick('+i+',\'UP\')">▲ Predict UP</button><button class="btn alt" onclick="pick('+i+',\'DOWN\')">▼ Predict DOWN</button></div>'}).join("")}
 window.pick=function(i,choice){if(state.coins<50){state.feed.unshift("Not enough play coins. Reset demo progress to try again.");save();return}state.coins-=50;const outcome=Math.random()<.5?"UP":"DOWN";if(choice===outcome){const reward=110+Math.min(state.streak*10,100);state.coins+=reward;state.streak++;state.score+=reward;state.feed.unshift("✅ "+assets[i].ticker+": "+choice+" hit. +"+reward+" play coins.");}else{state.streak=0;state.feed.unshift("↘ "+assets[i].ticker+": "+choice+" missed. Outcome: "+outcome+".");}state.feed=state.feed.slice(0,12);save();renderMarkets()};
-document.getElementById("reset").onclick=()=>{state={...initial,feed:["Demo progress reset."]};save();renderMarkets()};renderMarkets();renderStats();
+document.getElementById("reset").onclick=()=>{state={...initial,feed:["Demo progress reset."]};save();renderMarkets()};
+function escapeHtml(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+const TCGDEX="https://api.tcgdex.net/v2/en";
+const TRACK_KEY="pokediction-tracked-market-v1";
+let tracked=[];try{tracked=JSON.parse(localStorage.getItem(TRACK_KEY))||[]}catch{tracked=[]}
+function saveTracked(){localStorage.setItem(TRACK_KEY,JSON.stringify(tracked));renderTracked()}
+function dollars(n){return Number.isFinite(Number(n))?"$"+Number(n).toFixed(2):"No quote"}
+function priceOptions(card){
+ const out=[],p=card?.pricing?.tcgplayer||{};
+ Object.entries(p).forEach(([variant,v])=>{if(v&&typeof v==="object"&&(v.marketPrice!=null||v.midPrice!=null||v.lowPrice!=null)){out.push({source:"TCGplayer",variant,label:variant.replace(/-/g," "),price:Number(v.marketPrice??v.midPrice??v.lowPrice),low:v.lowPrice,mid:v.midPrice,high:v.highPrice,updated:p.updated||null,currency:"USD"})}});
+ const cm=card?.pricing?.cardmarket;
+ if(cm){if(cm.trend!=null||cm.avg!=null)out.push({source:"Cardmarket",variant:"normal",label:"Cardmarket trend",price:Number(cm.trend??cm.avg),low:cm.low,mid:cm.avg,updated:cm.updated||null,currency:"EUR"});if(cm["trend-holo"]!=null||cm["avg-holo"]!=null)out.push({source:"Cardmarket",variant:"holo",label:"Cardmarket holo trend",price:Number(cm["trend-holo"]??cm["avg-holo"]),low:cm["low-holo"],mid:cm["avg-holo"],updated:cm.updated||null,currency:"EUR"})}
+ return out.filter(x=>Number.isFinite(x.price));
+}
+function cardImage(card){return card.image?card.image+"/low.png":""}
+function bestPrice(card){return priceOptions(card).find(x=>x.source==="TCGplayer")||priceOptions(card)[0]||null}
+function setName(card){return card?.set?.name||"Set unknown"}
+function updateStatus(text){document.getElementById("marketStatus").textContent=text}
+async function fetchCard(id){const r=await fetch(TCGDEX+"/cards/"+encodeURIComponent(id));if(!r.ok)throw new Error("Card detail request failed ("+r.status+")");return await r.json()}
+document.getElementById("marketSearchForm").addEventListener("submit",async e=>{
+ e.preventDefault();const q=document.getElementById("marketSearchInput").value.trim();if(!q)return;
+ const results=document.getElementById("marketResults");results.innerHTML="";updateStatus("Searching the Pokémon card catalog…");
+ try{
+  const r=await fetch(TCGDEX+"/cards?name="+encodeURIComponent(q));if(!r.ok)throw new Error("Catalog request failed ("+r.status+")");
+  const list=await r.json();if(!Array.isArray(list)||!list.length){updateStatus("No cards found. Try a shorter name or exact Pokémon name.");return}
+  updateStatus("Found "+list.length+" catalog matches. Loading current market quotes…");
+  const details=await Promise.all(list.slice(0,8).map(c=>fetchCard(c.id).catch(()=>c)));
+  results.innerHTML=details.map(card=>{
+   const opts=priceOptions(card);const main=bestPrice(card);const img=cardImage(card);
+   const prices=opts.length?opts.map(p=>'<span class="market-badge">'+escapeHtml(p.source+' '+p.label)+': '+dollars(p.price)+'</span>').join(""):'<span class="market-badge">No market quote available</span>';
+   const safe=JSON.stringify(card.id);
+   const optsHtml=opts.map((p,i)=>'<option value="'+i+'">'+escapeHtml(p.source+" · "+p.label+" · "+dollars(p.price))+'</option>').join("");
+   return '<article class="card-result clear-float">'+(img?'<img loading="lazy" src="'+escapeHtml(img)+'" alt="'+escapeHtml(card.name)+' card">':'')+'<h3>'+escapeHtml(card.name)+'</h3><p>'+escapeHtml(setName(card))+' · #'+escapeHtml(card.localId||"?")+'</p><p>'+escapeHtml(card.rarity||"Rarity unknown")+'</p><div class="market-price">'+(main?dollars(main.price):"No quote")+'</div><div>'+prices+'</div>'+(opts.length?'<label class="market-meta" for="variant-'+escapeHtml(card.id)+'">Track price variant</label><select id="variant-'+escapeHtml(card.id)+'" style="width:100%;margin-top:5px;background:#080f20;color:#f3f6ff;border:1px solid #354667;border-radius:8px;padding:8px">'+optsHtml+'</select>':'')+'<button class="track-btn" '+(opts.length?'onclick="trackCard('+safe+', document.getElementById(\'variant-'+escapeHtml(card.id)+'\').value)"':'disabled')+'>'+(opts.length?'Track this card':'No price data to track')+'</button><div class="market-meta">Price source update: '+escapeHtml(main?.updated?new Date(main.updated).toLocaleString():"not provided")+'</div></article>'
+  }).join("");
+  updateStatus("Loaded "+details.length+" cards. Price data is from the provider's latest available snapshot, not a guaranteed tick-by-tick feed.");
+ }catch(err){updateStatus("Market lookup failed: "+err.message+". The public card API may be temporarily unavailable.");}
+});
+window.trackCard=async function(id,optionIndex){
+ const select=document.getElementById("variant-"+id);const results=document.getElementById("marketResults");const article=[...results.querySelectorAll(".card-result")].find(x=>x.querySelector("select")?.id==="variant-"+id);if(!article)return;
+ const cardName=article.querySelector("h3")?.textContent||id;const setLine=article.querySelector("p")?.textContent||"";const img=article.querySelector("img")?.src||"";
+ const option=select?.selectedOptions?.[0]?.textContent||"";const match=option.match(/(TCGplayer|Cardmarket)\s*·\s*(.*?)\s*·\s*\$?([\d.]+)/);
+ let source="TCGplayer",variant="normal",price=null,currency="USD";
+ try{const full=await fetchCard(id);const opts=priceOptions(full);const chosen=opts[Number(optionIndex)];if(!chosen){updateStatus("No usable price was returned for this variant.");return}source=chosen.source;variant=chosen.variant;price=chosen.price;currency=chosen.currency;
+  let item=tracked.find(t=>t.id===id&&t.source===source&&t.variant===variant);
+  if(!item){item={id,name:full.name,set:setName(full),localId:full.localId,image:cardImage(full),source,variant,currency,snapshots:[]};tracked.unshift(item)}
+  item.name=full.name;item.set=setName(full);item.image=cardImage(full);item.price=price;item.currency=currency;item.updated=chosen.updated||null;item.snapshots.push({at:new Date().toISOString(),price});item.snapshots=item.snapshots.slice(-30);saveTracked();updateStatus("Tracking "+item.name+" ("+item.set+") at "+currency+" "+Number(price).toFixed(2)+".");
+ }catch(err){updateStatus("Could not track this price: "+err.message)}
+};
+function priceSignal(item){
+ const s=item.snapshots||[];if(s.length>=2){const old=s[0].price,now=s[s.length-1].price;if(old>0){const pct=(now-old)/old*100;return (pct>0.5?"▲ ":pct<-.5?"▼ ":"→ ")+pct.toFixed(2)+"% since first saved snapshot"}}
+ return "Collecting snapshots · refresh again later";
+}
+function renderTracked(){
+ const root=document.getElementById("trackedCards");if(!root)return;if(!tracked.length){root.innerHTML='<p class="market-status">No tracked cards yet. Search above and choose a price variant to start.</p>';return}
+ root.innerHTML=tracked.slice(0,30).map((t,i)=>'<article class="tracked-card clear-float">'+(t.image?'<img loading="lazy" src="'+escapeHtml(t.image)+'" alt="">':'')+'<h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.set)+' · #'+escapeHtml(t.localId||"?")+'</p><div class="market-price">'+dollars(t.price)+' <small>'+escapeHtml(t.currency||"USD")+'</small></div><p>'+escapeHtml(t.source+' · '+t.variant.replace(/-/g," "))+'</p><p>'+escapeHtml(priceSignal(t))+'</p><p>'+((t.snapshots||[]).length)+' saved snapshots</p><button class="reset" onclick="removeTracked('+i+')">Stop tracking</button></article>').join("");
+}
+window.removeTracked=function(i){tracked.splice(i,1);saveTracked();updateStatus("Removed card from this browser's tracking list.")};
+document.getElementById("refreshTracked").addEventListener("click",async()=>{
+ if(!tracked.length){updateStatus("Nothing to refresh yet. Search for a card and track a price variant first.");return}
+ const btn=document.getElementById("refreshTracked");btn.disabled=true;updateStatus("Refreshing "+tracked.length+" tracked prices…");
+ let ok=0;
+ for(const item of tracked){try{const card=await fetchCard(item.id);const chosen=priceOptions(card).find(p=>p.source===item.source&&p.variant===item.variant);if(chosen){item.price=chosen.price;item.currency=chosen.currency;item.updated=chosen.updated||null;item.snapshots.push({at:new Date().toISOString(),price:chosen.price});item.snapshots=item.snapshots.slice(-30);ok++}}catch{}}
+ saveTracked();btn.disabled=false;updateStatus("Refreshed "+ok+" of "+tracked.length+" tracked cards. Local trend compares snapshots recorded by this browser.");
+});
+renderMarkets();renderStats();renderTracked();
 </script></body></html>

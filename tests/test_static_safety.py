@@ -16,7 +16,9 @@ GITIGNORE = (ROOT / ".gitignore").read_text(encoding="utf-8")
 
 class StaticSafetyTests(unittest.TestCase):
     def test_game_has_market_data_source(self):
-        self.assertIn("api.tcgdex.net/v2/en/cards", HTML)
+        self.assertIn('const TCGDEX="https://api.tcgdex.net/v2/en";', HTML)
+        self.assertIn('TCGDEX+"/cards?name="', HTML)
+        self.assertIn('TCGDEX+"/cards/"', HTML)
         self.assertIn("tcgplayer", HTML.lower())
         self.assertIn("cardmarket", HTML.lower())
 

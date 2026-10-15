@@ -1,0 +1,25 @@
+name: Pokediction quality checks
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static-smoke-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run static safety smoke tests
+        run: python3 -m unittest discover -s tests -v

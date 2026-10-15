@@ -1,5 +1,7 @@
--- Pokediction backend foundation (Supabase / PostgreSQL)
--- Safe starting point for accounts and prediction records.
+-- Pokediction backend schema reference (Supabase / PostgreSQL).
+-- The versioned initial migration lives at:
+-- supabase/migrations/202610150001_initial_pokediction_schema.sql
+-- Review and test before applying to any live project.
 -- No real-money balances or payouts are modeled here.
 
 create extension if not exists pgcrypto;
@@ -23,9 +25,17 @@ create table if not exists public.rounds (
   outcome text check (outcome in ('UP', 'DOWN', 'TIE')),
   created_at timestamptz not null default now(),
   constraint round_time_order check (closes_at > opens_at),
-  constraint settled_round_has_outcome check (
-    status <> 'settled' or outcome is not null
-  )
+  constraint round_asset_ticker_length
+    check (char_length(trim(asset_ticker)) between 1 and 64),
+  constraint round_opening_value_positive
+    check (opening_value is null or opening_value > 0),
+  constraint round_closing_value_positive
+    check (closing_value is null or closing_value > 0),
+  constraint settled_round_has_values
+    check (
+      status <> 'settled'
+      or (opening_value is not null and closing_value is not null and outcome is not null)
+    )
 );
 
 create table if not exists public.predictions (
@@ -34,7 +44,7 @@ create table if not exists public.predictions (
   round_id uuid not null references public.rounds(id) on delete cascade,
   choice text not null check (choice in ('UP', 'DOWN')),
   created_at timestamptz not null default now(),
-  unique (user_id, round_id)
+  constraint predictions_one_per_user_round unique (user_id, round_id)
 );
 
 create index if not exists predictions_user_created_idx
@@ -46,14 +56,12 @@ alter table public.profiles enable row level security;
 alter table public.rounds enable row level security;
 alter table public.predictions enable row level security;
 
--- Public can see only the non-sensitive round information.
 drop policy if exists "Rounds are readable" on public.rounds;
 create policy "Rounds are readable"
   on public.rounds for select
   to anon, authenticated
   using (true);
 
--- A signed-in user can see and change only their own profile.
 drop policy if exists "Users read own profile" on public.profiles;
 create policy "Users read own profile"
   on public.profiles for select
@@ -73,8 +81,6 @@ create policy "Users update own profile"
   using (auth.uid() = id)
   with check (auth.uid() = id);
 
--- Predictions are private to their owner. The client cannot write scores,
--- settle rounds, or edit/delete submitted predictions.
 drop policy if exists "Users read own predictions" on public.predictions;
 create policy "Users read own predictions"
   on public.predictions for select
@@ -97,6 +103,15 @@ create policy "Users submit prediction for open round"
     )
   );
 
--- Intentionally no client policies for creating/updating/deleting rounds,
--- settling outcomes, or changing prediction records after insertion.
--- Those actions must be performed by a trusted server/Edge Function.
+-- Explicit grants are defense in depth; RLS policies still apply.
+revoke all on table public.rounds from anon, authenticated;
+grant select on table public.rounds to anon, authenticated;
+
+revoke all on table public.predictions from anon, authenticated;
+grant select, insert on table public.predictions to authenticated;
+
+revoke all on table public.profiles from anon, authenticated;
+grant select, insert, update on table public.profiles to authenticated;
+
+-- No client policies/grants for creating or settling rounds, or editing/deleting
+-- predictions. Those actions must be performed by a trusted server function.

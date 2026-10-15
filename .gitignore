@@ -33,3 +33,15 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Secrets and local environment configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.mobileprovision
+secrets/
+supabase/.temp/
